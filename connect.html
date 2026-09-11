@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Connect</title>
+<style>
+  body { font-family: monospace; background: #0f0a1f; color: #00f2fe; padding: 30px; }
+</style>
+</head>
+<body>
+<div id="out">Checking...</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, update }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const cfg = {
+  apiKey: "AIzaSyCajK7dqg2SS-FRSbJHxonQQxr49NF5vZ8",
+  authDomain: "fuck-c46e9.firebaseapp.com",
+  databaseURL: "https://fuck-c46e9-default-rtdb.firebaseio.com",
+  projectId: "fuck-c46e9",
+  storageBucket: "fuck-c46e9.firebasestorage.app",
+  messagingSenderId: "1043993934415",
+  appId: "1:1043993934415:android:30ebdcdc70ca8cbf88083a"
+};
+const db = getDatabase(initializeApp(cfg));
+
+const p = new URLSearchParams(location.search);
+const key = (p.get("key") || "").toUpperCase().trim();
+const dev = (p.get("device") || "unknown").trim();
+const out = document.getElementById("out");
+
+function send(o) {
+  out.textContent = JSON.stringify(o);
+  document.title = "RESULT:" + o.status;
+}
+
+if (!key) { send({status:"fail", reason:"no_key"}); }
+else {
+  try {
+    const s = await get(ref(db, "keys/" + key));
+    if (!s.exists()) { send({status:"fail", reason:"invalid_key"}); }
+    else {
+      const k = s.val();
+      const now = Math.floor(Date.now()/1000);
+
+      if (k.expires !== 0 && k.expires < now) {
+        send({status:"fail", reason:"expired"});
+      } else if (k.status !== "active") {
+        send({status:"fail", reason:"disabled"});
+      } else {
+        const devs = k.devices || {};
+        const list = Object.keys(devs);
+
+        if (list.includes(dev)) {
+          send({status:"ok", msg:"already_registered"});
+        } else if (list.length < k.device_limit) {
+          const u = {};
+          u["keys/" + key + "/devices/" + dev] = now;
+          await update(ref(db), u);
+          send({status:"ok", msg:"new_device"});
+        } else {
+          send({status:"fail", reason:"device_limit"});
+        }
+      }
+    }
+  } catch(e) {
+    send({status:"fail", reason:"error", detail: e.message});
+  }
+}
+</script>
+</body>
+</html>
