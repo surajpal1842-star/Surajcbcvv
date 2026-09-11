@@ -1,0 +1,756 @@
+<!DOCTYPE html><html lang="en"><head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Browser Logo -->
+    <link rel="shortcut icon" href="images/logo.jpg" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <title>MAFIA MODE SERVER - Login</title>
+    <style>
+/* ===== MIDNIGHT AURORA – PURPLE × MAGENTA × TEAL (glassy) ===== */
+:root{
+  --glass-bg: rgba(20,16,35,.22);
+  --glass-border: rgba(190,130,255,.28);
+  --brand1:#8a2be2;      /* electric purple  */
+  --brand2:#ff2d95;      /* neon magenta     */
+  --brand3:#22e6c2;      /* aurora teal      */
+  --text:#f7f7fb;
+  --muted:rgba(247,247,251,.78);
+}
+
+/* Background: deep night with aurora sweeps */
+body{
+  background:
+  radial-gradient(1000px 700px at 15% 10%, rgba(79,172,254,.22), transparent 40%),
+  radial-gradient(1000px 700px at 85% 90%, rgba(108,99,255,.20), transparent 40%),
+  linear-gradient(135deg, #5c6fd2, #6b57c5) fixed;
+  color:var(--text);
+  font-family:'Poppins',sans-serif;
+  min-height:100dvh;
+  display:flex; align-items:center; justify-content:center;
+  padding:16px;
+}
+
+/* Wrapper */
+.auth-page{ width:100%; max-width:460px; }
+
+/* Card */
+.auth-card{
+  background: linear-gradient(135deg, rgba(138,43,226,.08), rgba(34,230,194,.06)), var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  box-shadow:
+    0 14px 32px rgba(0,0,0,.45),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  overflow:hidden;
+  position:relative;
+}
+
+/* subtle neon rim light */
+.auth-card::after{
+  content:"";
+  position:absolute; inset:-2px;
+  border-radius:22px;
+  pointer-events:none;
+  background: conic-gradient(from 140deg,
+    rgba(138,43,226,.25),
+    rgba(255,45,149,.25),
+    rgba(34,230,194,.25),
+    rgba(138,43,226,.25)
+  );
+  filter: blur(18px) saturate(120%);
+  opacity:.20;
+}
+
+/* header */
+.auth-head{
+  padding:20px 16px;
+  text-align:center;
+  font-weight:900; letter-spacing:.9px;
+  background:
+    linear-gradient(90deg, rgba(138,43,226,.18), rgba(255,45,149,.16), rgba(34,230,194,.14));
+  border-bottom:1px solid var(--glass-border);
+  text-shadow:0 2px 18px rgba(138,43,226,.35);
+}
+
+/* body */
+.auth-body{ padding:18px; }
+
+/* flash / status area */
+.status-wrap{ margin-bottom:14px; }
+
+/* Labels + inputs */
+.form-label{
+  font-weight:700; font-size:12.5px; margin-bottom:6px; color:var(--text);
+  letter-spacing:.4px;
+}
+
+.input-glass{
+  width:100%; border:none; border-radius:14px;
+  background: rgba(255,255,255,.06);
+  color:#fff; padding:13px 14px;
+  transition:.25s; line-height:1.25;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.input-glass::placeholder{ color:#e8e6ff; opacity:.85; }
+.input-glass:focus{
+  outline:none;
+  background: rgba(255,255,255,.12);
+  box-shadow:
+    0 0 0 3px rgba(138,43,226,.25),
+    inset 0 0 0 1px rgba(255,255,255,.10);
+}
+
+/* Checkbox row - updated for toggle and forgot password */
+.check-row{ 
+  display:flex; 
+  align-items:center; 
+  justify-content:space-between; 
+  margin:10px 0 16px; 
+}
+
+/* Toggle switch styles */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,.12);
+  border-radius: 34px;
+  transition: .3s;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 2px;
+  background: rgba(255,255,255,.6);
+  border-radius: 50%;
+  transition: .3s;
+}
+
+input:checked + .toggle-slider {
+  background: linear-gradient(45deg, var(--brand1), var(--brand2));
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+  background: white;
+}
+
+.toggle-label {
+  font-size:12.5px; 
+  color:var(--muted);
+  font-weight: 600;
+}
+
+/* Forgot password button */
+.forgot-password {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  color: var(--muted);
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.25);
+  color: var(--text);
+}
+
+/* Button */
+.btn-glass{
+  width:100%; border:none; border-radius:14px;
+  padding:13px 14px; font-weight:900; letter-spacing:.5px;
+  color:#0b0a12; cursor:pointer;
+  background: linear-gradient(45deg, var(--brand1), var(--brand2) 60%, var(--brand3));
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  box-shadow: 0 10px 22px rgba(138,43,226,.25), 0 6px 16px rgba(255,45,149,.20);
+}
+.btn-glass:hover{ transform:translateY(-2px); filter:saturate(110%); }
+.btn-glass:active{ transform:translateY(0); }
+
+/* register link */
+.register-text{ text-align:center; margin-top:14px; color:var(--muted); font-size:13px; }
+.register-text a{
+  color:var(--brand3); font-weight:800; text-decoration:none;
+  text-shadow:0 0 14px rgba(34,230,194,.35);
+}
+.register-text a:hover{ text-decoration:underline; }
+
+/* helpers */
+.text-danger{ color:#ff6b8a !important; }
+.small{ font-size:.875rem; }
+.mt-1{ margin-top:.25rem; }
+.mb-2{ margin-bottom:.75rem; }
+
+/* motion safety */
+@media (prefers-reduced-motion: reduce){
+  .btn-glass, .input-glass{ transition:none; }
+}
+
+/* mobile tweaks */
+@media (max-width:380px){
+  .auth-body{ padding:16px; }
+  .btn-glass{ padding:12px; }
+  .check-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .forgot-password {
+    align-self: flex-end;
+  }
+}
+</style>
+
+    <link href="css/natacode.css" rel="stylesheet" type="text/css">
+    <script src="js/jquery-3.6.0.js"></script>
+<style> 
+    body {
+        font-family: 'Poppins', sans-serif !important;
+        background-size: auto;
+        transition: background-image 0.5s ease;
+    }
+    
+    body.light-mode {
+        background-image: url("images/file-0000000090a461f786ac61ef398aeaf4.png");
+    }
+    
+    body.dark-mode {
+        background-image: url("images/sourabh.png");
+    }
+    
+    .theme-switch-wrapper {
+        position: fixed;
+        right: 20px;
+        bottom: 70px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .theme-switch {
+        display: inline-block;
+        height: 34px;
+        position: relative;
+        width: 60px;
+    }
+    
+    .theme-switch input {
+        display: none;
+    } 
+     
+     footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, var(--neon-blue), var(--cyber-purple)); /* ✅ same as header */
+  backdrop-filter: blur(8px);
+  padding: 6px 0;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+
+footer small {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+    
+    .slider {
+        background-color: #ccc;
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        background-color: #fff;
+        bottom: 4px;
+        content: "";
+        height: 26px;
+        left: 4px;
+        position: absolute;
+        transition: .4s;
+        width: 26px;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    } 
+    
+    table, 
+    table.table,
+    .table,
+    table th,
+    table td,
+    .table th,
+    .table td,
+    table thead th,
+    .table thead th,
+    table tbody td,
+    .table tbody td,
+    table tfoot td,
+    .table tfoot td {
+        background-color: transparent !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    /* For striped tables */
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* For hover effects */
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+</style></head>
+
+<body class="dark-mode">
+    <!-- Start menu -->
+    <header>
+  <nav class="navbar navbar-dark fixed-top glass-nav shadow-lg">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+      <!-- Brand -->
+      <a class="navbar-brand brand-glass" href="https://surajpal1842-star.github.io/Surajcbcvv/">
+        <!-- user-shield SVG icon (inline) -->
+        <svg class="user-shield-icon" viewBox="1 1 22 22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="img">
+          <path d="M12 1L3 5V11C3 16.55 7.04 21.74 12 23C16.96 21.74 21 16.55 21 11V5L12 1ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 20C9.33 20 6.41 18.36 6.05 15C6.17 13 10 11.9 12 11.9C14 11.9 17.83 13 17.95 15C17.59 18.36 14.67 20 12 20Z"></path>
+        </svg>
+        MAFIA MODE SERVER      </a>
+
+      <!-- 3-line menu button -->
+      <button class="menu-btn disabled" onclick="" disabled="" aria-label="Open menu" aria-controls="slideMenu" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+    </div>
+  </nav>
+</header>
+
+<!-- Spacer under navbar -->
+<div style="height: var(--nav-h);"></div>
+
+<!-- Overlay -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()" aria-hidden="true"></div>
+
+<!-- Slide-in Menu -->
+<aside id="slideMenu" class="slide-menu" aria-hidden="true" role="dialog" aria-label="Sidebar menu">
+  <div class="menu-header">
+    <h5 class="m-0">MAFIA MODE SERVER  </h5></div>
+
+  <nav class="menu-links">
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv/keys"><i class="bi bi-key-fill pe-2"></i>Keys</a>
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv/keys/generate-random"><i class="bi bi-plus-circle-fill pe-2"></i>Rendom Key</a>
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv/keys/generate"><i class="bi bi-plus-circle-fill pe-2"></i>Costom Key</a>
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv/settings"><i class="bi bi-gear-fill pe-2"></i>Settings</a>
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv/twofa" class="nav-link"><i class="fas fa-shield-alt"></i> 2AF Authentication</a>
+
+    
+    <div class="menu-divider"></div>
+    <a href="https://surajpal1842-star.github.io/Surajcbcvv//logout" class="logout-link">
+      <i class="bi bi-box-arrow-left pe-2"></i>Logout
+    </a>
+  </nav>
+
+  <div class="menu-footer">
+    <span class="chip">v1.0</span>
+    <a href="https://t.me/SourabhProfessor" target="_blank" class="chip">
+        @SourabhProfessor
+    </a>
+</div>
+</aside>
+
+<style>
+  /* ===== FIRST THEME COLORS APPLIED ===== */
+:root{
+    --glass-bg: rgba(255,255,255,.14);
+    --glass-border: rgba(255,255,255,.28);
+    --brand1:#4facfe;   /* blue */
+    --brand2:#00f2fe;   /* cyan */
+    --ink:#0b1020;      /* deep background */
+    --text:#fff;
+    --muted:#e6fbff;
+    --nav-h:60px;
+  }
+
+  /* NAVBAR */
+  .glass-nav{
+    z-index: 3000;
+    background: linear-gradient(135deg, var(--neon-blue), var(--cyber-purple));
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+  }
+  .brand-glass{
+    color: var(--neon-blue) !important; font-weight: 500;
+    text-shadow: 0 0 12px rgba(0,242,255,.7);
+    letter-spacing: .8px;
+    display: inline-flex;
+    align-items: center;
+    gap:8px;
+  }
+
+  /* user-shield icon */
+  .user-shield-icon{
+    width:20px;
+    height:20px;
+    display:inline-block;
+    vertical-align:middle;
+    fill: currentColor; /* inherits color from .brand-glass */
+    color: var(--neon-blue);
+    filter: drop-shadow(0 0 8px rgba(0,242,255,.45));
+  }
+
+  /* MENU BUTTON */
+  .menu-btn{ width: 32px; height: 24px; display:flex; flex-direction:column; justify-content:space-between;
+             border:none; background:transparent; cursor:pointer; }
+  .menu-btn .bar {
+  height: 3px;
+  width: 100%;
+  background-color: rgba(0,242,255,.7); /* 👈 Yehi color apply hoga */
+  border-radius: 4px;
+  transition: .35s;
+  box-shadow: 0 0 8px rgba(0,242,255,.7); /* matching neon glow */
+}
+  .menu-btn.active .bar:nth-child(1){ transform: rotate(45deg) translate(5px,5px); }
+  .menu-btn.active .bar:nth-child(2){ opacity:0; }
+  .menu-btn.active .bar:nth-child(3){ transform: rotate(-45deg) translate(6px,-6px); }
+
+  .menu-btn.disabled{ opacity:.4; pointer-events:none; }
+
+  /* OVERLAY */
+  .menu-overlay{ position:fixed; top:var(--nav-h); left:0; width:100%; height:calc(100% - var(--nav-h));
+    background:rgba(0,0,0,.5); z-index:2000; display:none; }
+  .menu-overlay.show{ display:block; }
+
+  /* SLIDE MENU */
+  .slide-menu{
+    position:fixed; top:var(--nav-h); right:0; width:0; height:calc(100% - var(--nav-h));
+    background: var(--panel-bg); backdrop-filter: blur(14px);
+    border-left:1px solid var(--glass-border); box-shadow:-8px 0 24px rgba(0,0,0,.5);
+    overflow:hidden; transition: width .35s ease; z-index:2500;
+    display:flex; flex-direction:column;
+  }
+  .slide-menu.open{ width: 240px; }
+
+  .menu-header{
+    padding:14px 16px; text-align:center;
+    background: linear-gradient(135deg, rgba(0,242,255,.15), rgba(125,0,255,.25));
+    color: var(--neon-blue); font-weight: 500;
+    text-shadow: 0 0 10px rgba(0,242,255,.7);
+    border-bottom:1px solid var(--glass-border);
+  }
+
+  .menu-links{ padding:6px 0; flex:1; overflow-y:auto; }
+  .menu-links a{
+    display:block; padding:12px 18px; color:#e0f7fa; font-weight:500;
+    text-decoration:none; border-right:4px solid transparent;
+    transform:translateX(24px); opacity:0;
+    transition:all .3s ease;
+  }
+  .slide-menu.open .menu-links a{ transform:translateX(0); opacity:1; }
+  .menu-links a:hover{
+    background: rgba(0,242,255,.12); color:#fff;
+    border-right:4px solid var(--neon-blue);
+  }
+
+  .menu-divider{ height:1px; background:rgba(255,255,255,.15); margin:10px 16px; }
+ .logout-link {
+  color: red !important;
+}
+
+  .menu-footer{ padding:10px 12px; border-top:1px solid rgba(255,255,255,.1); display:flex; gap:8px; }
+  .chip{ padding:6px 10px; border-radius:999px; background:rgba(0,242,255,.1);
+         border:1px solid var(--glass-border); font-size:12px; color:#fff; }
+</style>
+
+<script>
+  (function(){
+    const menu=document.getElementById('slideMenu');
+    const overlay=document.getElementById('menuOverlay');
+    const btn=document.querySelector('.menu-btn');
+
+    window.toggleMenu=function(button){
+      if(menu.classList.contains('open')){
+        menu.classList.remove('open'); overlay.classList.remove('show');
+        button.classList.remove('active'); button.setAttribute('aria-expanded','false');
+      }else{
+        menu.classList.add('open'); overlay.classList.add('show');
+        button.classList.add('active'); button.setAttribute('aria-expanded','true');
+      }
+    }
+    window.closeMenu=function(){
+      menu.classList.remove('open'); overlay.classList.remove('show');
+      btn?.classList.remove('active'); btn?.setAttribute('aria-expanded','false');
+    }
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMenu(); });
+  })();
+</script>    <!-- End of menu -->
+    <main>
+        <div class="container p-3 py-4 mb-3" id="content">
+            <!-- Start content -->
+            <div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-head">SYSTEM LOGIN</div>
+    <div class="auth-body">
+      <div class="status-wrap">
+              <div class="cyber-alert cyber-alert-primary" role="alert" aria-live="polite">
+      <div class="cyber-alert-content">
+        <i class="fas fa-circle-question cyber-pulse"></i>
+        Welcome Stranger
+        <button type="button" class="cyber-alert-close" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+  
+<style>
+  :root{
+    --brand1:#4facfe;   /* first theme blue */
+    --brand2:#00f2fe;   /* first theme cyan */
+    --glass-bg: rgba(255,255,255,.14);
+    --glass-border: rgba(255,255,255,.28);
+  }
+
+  /* GLASS ALERT (First-theme look) */
+  .cyber-alert{
+    border:1px solid var(--glass-border);
+    border-radius:12px;
+    padding: .85rem 1rem;
+    margin-bottom:1rem;
+    position:relative;
+    background: linear-gradient(135deg, rgba(79,172,254,.12), rgba(0,242,254,.10));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 22px rgba(0,0,0,.25);
+    animation: cyberFadeIn .45s ease-out both;
+  }
+  .cyber-alert-content{
+    display:flex; align-items:center; gap:.75rem; color:#fff;
+  }
+  .cyber-alert i{ font-size:1.1rem; }
+
+  /* Variants (border/text tint) */
+  .cyber-alert-primary{ border-color: var(--brand2); color:#e9fcff; }
+  .cyber-alert-success{ border-color:#32d296; color:#bff4db; }
+  .cyber-alert-warning{ border-color:#ffcc00; color:#ffeaa6; }
+  .cyber-alert-danger { border-color:#ff4c4c; color:#ffc7c7; }
+
+  /* Close button */
+  .cyber-alert-close{
+    background:transparent; border:none; color:inherit; margin-left:auto; cursor:pointer;
+    padding:.25rem; line-height:1;
+    opacity:.9; transition:.2s;
+  }
+  .cyber-alert-close:hover{ opacity:1; transform:scale(1.05); }
+
+  /* Pulse for leading icon */
+  @keyframes pulse { 0%{opacity:.85} 50%{opacity:1} 100%{opacity:.85} }
+  .cyber-pulse{ animation:pulse 2s ease-in-out infinite; }
+
+  /* In & Out */
+  @keyframes cyberFadeIn { from{opacity:0; transform:translateY(-8px)} to{opacity:1; transform:translateY(0)} }
+  @keyframes cyberFadeOut{ from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-8px)} }
+</style>
+
+<script>
+  (function(){
+    // Manual close
+    document.querySelectorAll('.cyber-alert-close').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        const box = this.closest('.cyber-alert');
+        box.style.animation = 'cyberFadeOut .45s ease-out forwards';
+        setTimeout(()=> box.remove(), 450);
+      });
+    });
+
+    // Auto-hide after 5s (pause on hover)
+    document.querySelectorAll('.cyber-alert').forEach(box=>{
+      let timer = setTimeout(()=>dismiss(box), 5000);
+      box.addEventListener('mouseenter', ()=> clearTimeout(timer));
+      box.addEventListener('mouseleave', ()=> timer = setTimeout(()=>dismiss(box), 1500));
+    });
+
+    function dismiss(el){
+      if(!el) return;
+      el.style.animation = 'cyberFadeOut .45s ease-out forwards';
+      setTimeout(()=> el.remove(), 450);
+    }
+  })();
+</script>      </div>
+
+      <form action="https://surajpal1842-star.github.io/Surajcbcvv/" method="post" accept-charset="utf-8">
+<input type="hidden" name="csrf_test_name" value="318b952e59afae8578737e6ad945c964">        <audio src="https://vip-key.xyz/AUDIO/welcome.mp3" autoplay="autoplay"></audio>
+
+        <div class="mb-2">
+          <label for="username" class="form-label">USERNAME</label>
+          <input type="text" class="input-glass" name="username" id="username" placeholder="Enter your username" required="" minlength="4">
+                  </div>
+
+        <div class="mb-2">
+          <label for="password" class="form-label">PASSWORD</label>
+          <input type="password" class="input-glass" name="password" id="password" placeholder="Enter your password" required="" minlength="6">
+                  </div>
+
+        <!-- ✅ Hidden device id for single-device login -->
+        <input type="hidden" name="device_id" id="device_id" value="web-bs1x5j0et1s">
+
+        <!-- Existing hidden field -->
+        <input type="hidden" name="ip" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36">
+
+        <div class="check-row">
+          <div class="toggle-wrapper">
+            <label class="toggle-switch">
+              <input type="checkbox" id="stay_log" name="stay_log" value="yes">
+              <span class="toggle-slider"></span>
+            </label>
+            <label for="stay_log" class="toggle-label">STAY LOGGED IN</label>
+          </div>
+          <a href="https://surajpal1842-star.github.io/Surajcbcvv//forgot-password" class="forgot-password">FORGOT PASSWORD?</a>
+        </div>
+
+        <button type="submit" class="btn-glass">ACCESS SYSTEM</button>
+      </form>
+      <p class="register-text">
+        DON'T HAVE AN ACCOUNT ?
+        <a href="https://surajpal1842-star.github.io/Surajcbcvv/register">REGISTER HERE</a>
+      </p>
+      <p class="register-text">
+        FORGOT DEVICE LOCK ?
+        <a href="https://surajpal1842-star.github.io/Surajcbcvv/device-reset">RESET DEVICE</a>
+      </p>
+      <p class="register-text">
+        WANT OWN PANEL ?
+        <a href="https://telegram.me/HaveProfessor">CONTACT US</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ✅ Generate or reuse device_id and set in hidden field
+(function() {
+  var key = "device_id";
+  var deviceId = localStorage.getItem(key);
+  if (!deviceId) {
+    deviceId = "web-" + Math.random().toString(36).substr(2, 16);
+    localStorage.setItem(key, deviceId);
+  }
+  document.getElementById("device_id").value = deviceId;
+})();
+</script>
+
+            <!-- End of content -->
+        </div>
+    </main>
+    
+    <!-- ✅ Footer -->
+  <footer class="text-white text-center">
+    <div class="container">
+      <small>© Fri 11-Sep 2026 - MAFIA MODE SERVER</small>
+    </div>
+  </footer>
+    
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.2"></script>
+    
+    <script src="js/natacode.js" type="text/javascript"></script>        
+    <script>
+        // Theme switcher functionality
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        const currentTheme = localStorage.getItem('theme');
+        const themeLabels = document.querySelectorAll('.theme-label');
+        
+        // Apply saved theme or default to dark
+        if (currentTheme) {
+            document.body.className = currentTheme;
+            if (currentTheme === 'light-mode') {
+                toggleSwitch.checked = true;
+                updateLabels('light');
+            } else {
+                updateLabels('dark');
+            }
+        } else {
+            // Default to dark mode if no preference saved
+            document.body.classList.add('dark-mode');
+            updateLabels('dark');
+        }
+        
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light-mode');
+                updateLabels('light');
+            } else {
+                document.body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+                updateLabels('dark');
+            }
+        }
+        
+        function updateLabels(mode) {
+            if (mode === 'light') {
+                themeLabels[0].style.display = 'none';
+                themeLabels[1].style.display = 'inline';
+            } else {
+                themeLabels[0].style.display = 'inline';
+                themeLabels[1].style.display = 'none';
+            }
+        }
+        
+        toggleSwitch.addEventListener('change', switchTheme, false);
+    </script>
+
+</body></html>
